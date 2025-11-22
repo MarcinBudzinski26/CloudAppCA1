@@ -7,7 +7,8 @@
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
-    "cdk": "cdk"
+    "cdk": "cdk",
+    "schema": "typescript-json-schema --noExtraProps --required --refs false -o ./shared/types.schema.json  \"./shared/types.d.ts\" \"*\""
   },
   "devDependencies": {
     "@types/aws-lambda": "^8.10.145",
@@ -15,12 +16,14 @@
     "aws-cdk": "2.1027.0",
     "esbuild": "^0.24.0",
     "ts-node": "^10.9.2",
-    "typescript": "~5.6.2"
+    "typescript": "~5.6.2",
+    "typescript-json-schema": "^0.66.0"
   },
   "dependencies": {
     "@aws-sdk/client-dynamodb": "^3.658.1",
     "@aws-sdk/lib-dynamodb": "^3.658.1",
     "@aws-sdk/util-dynamodb": "^3.658.1",
+    "ajv": "^8.17.1",
     "aws-cdk-lib": "2.213.0",
     "constructs": "^10.3.0",
     "source-map-support": "^0.5.21"

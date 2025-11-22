@@ -6,6 +6,9 @@
       "es2020",
       "dom"
     ],
+
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
     "declaration": true,
     "strict": true,
     "noImplicitAny": true,
@@ -27,5 +30,11 @@
   "exclude": [
     "node_modules",
     "cdk.out"
-  ]
+  ],
+  "include": [
+  "shared/*.json",
+  "lambdas/**/*.ts",
+  "lib/**/*.ts",
+  "bin/**/*.ts"
+  ],
 }
