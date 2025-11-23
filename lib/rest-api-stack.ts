@@ -39,7 +39,7 @@ export class RestAPIStack extends cdk.Stack {
       cognitoUserPools: [userPool],
     })
 
-    // Auth API (same as labs)
+   /* // Auth API (same as labs)
     const authApi = new apig.RestApi(this, "AuthServiceApi", {
       description: "Authentication Service RestApi",
       endpointTypes: [apig.EndpointType.REGIONAL],
@@ -50,7 +50,7 @@ export class RestAPIStack extends cdk.Stack {
 
     // /auth resource root
     const authResource = authApi.root.addResource("auth")
-
+*/
 
     // Tables
     const moviesTable = new dynamodb.Table(this, "MoviesTable", {
@@ -169,8 +169,8 @@ export class RestAPIStack extends cdk.Stack {
 
     this.addAuthRoute("signup", "POST", "SignUpFn", "signup.ts")
     this.addAuthRoute("confirm_signup", "POST", "ConfirmFn", "confirm-signup.ts")
-  // this.addAuthRoute("signin", "POST", "SignInFn", "signin.ts")
-  //  this.addAuthRoute("signout", "POST", "SignOutFn", "signout.ts")
+    this.addAuthRoute("signin", "POST", "SignInFn", "signin.ts")
+    this.addAuthRoute("signout", "GET", "SignOutFn", "signout.ts")
   // this.addAuthRoute("setup", "POST", "SetupFn", "setup.ts")
 
     const moviesEndpoint = api.root.addResource("movies")
