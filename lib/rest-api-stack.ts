@@ -39,6 +39,19 @@ export class RestAPIStack extends cdk.Stack {
       cognitoUserPools: [userPool],
     })
 
+    // Auth API (same as labs)
+    const authApi = new apig.RestApi(this, "AuthServiceApi", {
+      description: "Authentication Service RestApi",
+      endpointTypes: [apig.EndpointType.REGIONAL],
+      defaultCorsPreflightOptions: {
+        allowOrigins: apig.Cors.ALL_ORIGINS,
+      },
+    })
+
+    // /auth resource root
+    const authResource = authApi.root.addResource("auth")
+
+
     // Tables
     const moviesTable = new dynamodb.Table(this, "MoviesTable", {
       billingMode: dynamodb.BillingMode.PAY_PER_REQUEST,
@@ -153,12 +166,12 @@ export class RestAPIStack extends cdk.Stack {
     })
 
     this.auth = api.root.addResource("auth")
-    
+
     this.addAuthRoute("signup", "POST", "SignUpFn", "signup.ts")
-    this.addAuthRoute("confirm", "POST", "ConfirmFn", "confirm.ts")
-    this.addAuthRoute("signin", "POST", "SignInFn", "signin.ts")
-    this.addAuthRoute("signout", "POST", "SignOutFn", "signout.ts")
-    this.addAuthRoute("setup", "POST", "SetupFn", "setup.ts")
+  // this.addAuthRoute("confirm", "POST", "ConfirmFn", "confirm.ts")
+  // this.addAuthRoute("signin", "POST", "SignInFn", "signin.ts")
+  //  this.addAuthRoute("signout", "POST", "SignOutFn", "signout.ts")
+  // this.addAuthRoute("setup", "POST", "SetupFn", "setup.ts")
 
     const moviesEndpoint = api.root.addResource("movies")
     const movieEndpoint = moviesEndpoint.addResource("{movieId}")
