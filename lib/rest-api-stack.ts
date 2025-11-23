@@ -12,6 +12,10 @@ import { generateBatch } from "../shared/util"
 import { movies, movieCasts } from "../seed/movies"
 
 export class RestAPIStack extends cdk.Stack {
+  private auth: apig.IResource
+  private userPoolId: string
+  private userPoolClientId: string
+
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props)
 
@@ -25,6 +29,10 @@ export class RestAPIStack extends cdk.Stack {
     const appClient = userPool.addClient("AppClient", {
       authFlows: { userPassword: true },
     })
+
+    this.userPoolId = userPool.userPoolId
+    this.userPoolClientId = appClient.userPoolClientId
+
 
     // Authorizer for api methods
     const authorizer = new apig.CognitoUserPoolsAuthorizer(this, "MoviesAuthorizer", {
@@ -144,6 +152,14 @@ export class RestAPIStack extends cdk.Stack {
       },
     })
 
+    this.auth = api.root.addResource("auth")
+    
+    this.addAuthRoute("signup", "POST", "SignUpFn", "signup.ts")
+    this.addAuthRoute("confirm", "POST", "ConfirmFn", "confirm.ts")
+    this.addAuthRoute("signin", "POST", "SignInFn", "signin.ts")
+    this.addAuthRoute("signout", "POST", "SignOutFn", "signout.ts")
+    this.addAuthRoute("setup", "POST", "SetupFn", "setup.ts")
+
     const moviesEndpoint = api.root.addResource("movies")
     const movieEndpoint = moviesEndpoint.addResource("{movieId}")
     const movieCastEndpoint = moviesEndpoint.addResource("cast")
@@ -197,4 +213,34 @@ export class RestAPIStack extends cdk.Stack {
     new cdk.CfnOutput(this, "UserPoolClientId", { value: appClient.userPoolClientId })
     new cdk.CfnOutput(this, "ApiUrl", { value: api.url })
   }
+
+  private addAuthRoute(
+    resourceName: string,
+    method: string,
+    fnName: string,
+    fnEntry: string
+  ): void {
+    const commonFnProps = {
+      architecture: lambda.Architecture.ARM_64,
+      timeout: cdk.Duration.seconds(10),
+      memorySize: 128,
+      runtime: lambda.Runtime.NODEJS_18_X,
+      handler: "handler",
+      environment: {
+        USER_POOL_ID: this.userPoolId,
+        CLIENT_ID: this.userPoolClientId,
+        REGION: cdk.Aws.REGION,
+      },
+    }
+
+    const resource = this.auth.addResource(resourceName)
+    const fn = new lambdanode.NodejsFunction(this, fnName, {
+      ...commonFnProps,
+      entry: `${__dirname}/../lambdas/auth/${fnEntry}`,
+    })
+
+    resource.addMethod(method, new apig.LambdaIntegration(fn))
+  }
+
+
 }
