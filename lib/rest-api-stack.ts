@@ -168,7 +168,7 @@ export class RestAPIStack extends cdk.Stack {
     this.auth = api.root.addResource("auth")
 
     this.addAuthRoute("signup", "POST", "SignUpFn", "signup.ts")
-  // this.addAuthRoute("confirm", "POST", "ConfirmFn", "confirm.ts")
+    this.addAuthRoute("confirm_signup", "POST", "ConfirmFn", "confirm-signup.ts")
   // this.addAuthRoute("signin", "POST", "SignInFn", "signin.ts")
   //  this.addAuthRoute("signout", "POST", "SignOutFn", "signout.ts")
   // this.addAuthRoute("setup", "POST", "SetupFn", "setup.ts")
